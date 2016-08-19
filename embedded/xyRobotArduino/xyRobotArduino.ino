@@ -8,6 +8,7 @@
 
 #include <AccelStepper.h>
 #include <AFMotor.h>
+#include <MultiStepper.h>
 
 
 #define CM_TO_STEP 0.0525
@@ -15,18 +16,27 @@
 //--------------------------------------------------------------------------
 //COMMUNICATION & LOGIC
 //--------------------------------------------------------------------------
-#define INIT    0
-#define IDLE    1
-#define MOVING  2
+#define INIT          0
+#define IDLE          1
+#define MOVING        2
+#define DRAW_ELLIPSE  3
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false; 
-long workingX,workingY,workingDiag1,workingDiag2;
+float workingX,workingY,workingDiag1,workingDiag2;
 String workingString;
 const char delimiter[2] = ",";
+char * workingCstr;
+char inChar;
+
 int state=INIT;
 unsigned long eventTime = 0;
 
+//--------------------------------------------------------------------------
+//DRAW
+//--------------------------------------------------------------------------
+float lerpValue=0;
+float cX=0,cY=0,rX=0,rY=0;
 
 //--------------------------------------------------------------------------
 //ACCELERATION LIB AND STEPPER SETUP
@@ -34,6 +44,8 @@ unsigned long eventTime = 0;
 // two stepper motors one on each port
 AF_Stepper motor1(200, 1);
 AF_Stepper motor2(200, 2);
+MultiStepper steppers;
+long positions[2];
 
 //abstractions for motor controllers
 void forwardstep1() {  
@@ -63,6 +75,8 @@ void setup()
 {  
   Serial.begin(115200);
   initSteppers();
+  Serial.print(freeRam());
+  Serial.print("s");
     
 }
 

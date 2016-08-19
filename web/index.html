@@ -4,12 +4,17 @@
 		<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">
 			
 			<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-			<script type="text/javascript" src="https://raw.githubusercontent.com/pierdr/tramontana/master/lib/bft_min.js">
+			<script type="text/javascript" src="https://rawgit.com/pierdr/tramontana/master/lib/bft_min.js">
 			</script>
-			<script type="text/javascript" src="svg.js"></script>
+			<script type="text/javascript" src="bitmap.js"></script>
+			<script src="https://rawgithub.com/processing-js/processing-js/v1.4.8/processing.min.js"></script> 
 			</head>
+    <style>body{
+        background:#fff;
+    }</style>
 
 	<body>
+	
         <H1>XY ROBOT</H1>
         <hr/>
         HEAD<br><br>
@@ -21,9 +26,12 @@
 		<button id="calibrate">Calibrate</button><br/><br/>
 
 		<textarea id="svg" rows="10" cols="50"></textarea><br/>
+		<canvas data-processing-sources="anything.pde"></canvas>
+
 		<div id="previewBox" style="float:right;border:1px solid #ccc"></div>
 		<button id="preview">Preview</button>
 		<button id="draw">Draw</button>
+		<button id="draw_gen">Draw Gen</button>
 
 	</body>
 </html>
