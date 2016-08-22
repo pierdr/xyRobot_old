@@ -1,5 +1,7 @@
-var IPAddressHEAD="172.16.27.30";
+var IPAddressHEAD="172.16.27.90";
 var IPAddressBASE="172.16.27.35";
+
+
 var linesToDraw=[];
 var colorsToDraw=[];
 
@@ -13,6 +15,14 @@ var servoDOWN = 180;
 var isWifi =false;
 var serial;
 
+
+/**CAMERA**/
+var IPAddressCAMERA="172.16.27.86";
+var CAMERA;
+var elapsedShutterOpen;
+var TIME_SHUTTER = 6000;
+var intervalCamera;
+/*END CAMERA*/
 function respondToSerialCommunication(val){
 
   
@@ -22,6 +32,7 @@ function respondToSerialCommunication(val){
       if(state==MOVE)
       {
         changeState(DRAW);
+
         goTo(linesToDraw[lineCounter].x2,linesToDraw[lineCounter].y2);
         
         
@@ -33,6 +44,8 @@ function respondToSerialCommunication(val){
         if(lineCounter>=linesToDraw.length)
         {
           changeState(IDLE);
+          CAMERA.setRelayEmbedded(3, 1);
+
           resetPosition();
           return;
         }
@@ -48,9 +61,9 @@ function respondToSerialCommunication(val){
           return;
         }*/
         window.setTimeout(function(){
-           changeState(DRAW);
+           changeState(MOVE);
         goTo(nextX,nextY);
-          },0);
+          },5);
         
         
         
@@ -66,8 +79,12 @@ $(function(){
   HEAD.setupSocket(IPAddressHEAD);
   window.setTimeout(function(){HEAD.setServoEmbedded(1, servoUP);}, 1000);
   
-
-  
+  /**CAMERA**/
+  CAMERA = new BFtObject();
+  CAMERA.setupSocket(IPAddressCAMERA);
+  window.setTimeout(function(){CAMERA.setRelayEmbedded(2, 1);}, 1000);
+  elapsedShutterOpen=0;
+  /*END CAMERA**/
   
   //SERIAL WITH SERIALITY
   
@@ -119,17 +136,36 @@ console.log(ser);
   $("#pendown").on("click",function(){
      HEAD.setServoEmbedded(1, servoDOWN);
   });
+  $("#reset").on("click",function(){
+    changeState(IDLE);
+     CAMERA.setRelayEmbedded(3,1);
+     HEAD.setColorEmbedded(0, 0, 0, 0, 0);
+     resetPosition();
+
+  });
   $("#draw_gen").on("click",function(){
     HEAD.setServoEmbedded(1, servoDOWN);
     console.log("MOVING",linesToDraw[0].x1,linesToDraw[0].y1);
     changeState(MOVE);
     lineCounter=0;
     goTo(linesToDraw[lineCounter].x1,linesToDraw[lineCounter].y1);
-    
+    ///***CAMERA**////
+        CAMERA.setRelayEmbedded(3, 0);
+      /* intervalCamera= window.setInterval(function(){
+          CAMERA.setRelayEmbedded(3,1);
+          window.setTimeout(function(){
+            CAMERA.setRelayEmbedded(3,0);
+            if(state==IDLE)
+            {
+              clearInterval(intervalCamera);
+              CAMERA.setRelayEmbedded(3,1);
+            }
+          },100);
+        },TIME_SHUTTER);*/
 
-  });
+      });
 
-});
+    });////CAMERA END////
 
 function changeState(newState)
 {

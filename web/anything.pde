@@ -1,22 +1,22 @@
-/* @pjs preload="imageToDraw.jpg"; */
+/* @pjs preload="media/0.jpg"; */
 
 var event=0;
 var marker=false;
 var len=100;
-
+var steps=8;
 PImage b;
 
 void setup()
 {
 	size(300,420);
-	b = loadImage("imageToDraw1.jpg");
+	b = loadImage("media/0.jpg");
 
 	var back=false;
 	b.loadPixels();
 	var xDimension=b.width;
 	var yDimension=b.height;
 
-	for (int i=1; i < yDimension; i+=5) { 
+	for (int i=1; i < yDimension; i+=steps) { 
 		var generate=function(x,y){
 			color cTmp=b.pixels[y*xDimension+x];
 	  		linesToDraw.push({"x1":Math.floor(x),"y1":Math.floor(y),"x2":Math.floor(((back)?x-1:x+1)),"y2":Math.floor(y)});
@@ -24,14 +24,14 @@ void setup()
 		};
 		if(!back)
 		{
-			for(int z=1;z<xDimension-5;z+=5)
+			for(int z=1;z<xDimension-steps;z+=steps)
 			{
 	   			generate(z,i);		
 	   		}
 	   		back=!back;
 		}
 		else {
-			for(int z=xDimension;z>=5;z-=5)
+			for(int z=xDimension;z>=steps;z-=steps)
 			{
 	   			generate(z,i);		
 	   		}
